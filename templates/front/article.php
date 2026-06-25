@@ -83,19 +83,17 @@ require ROOT_PATH . '/templates/front/_head.php';
 <section class="related-section">
 <div class="container">
   <h2 class="section-title">Related Articles</h2>
-  <div class="article-grid cols-4">
+  <div class="related-list">
     <?php foreach ($related as $r): ?>
-    <article class="article-card">
-      <a href="/article/<?= e($r['slug']) ?>" class="card-img-link">
-        <?php if ($r['featured_image']): ?>
-        <img src="<?= e($r['featured_image']) ?>" alt="<?= e($r['title']) ?>" loading="lazy">
-        <?php else: ?><div class="card-placeholder"><i class="fas fa-newspaper"></i></div><?php endif ?>
-      </a>
-      <div class="card-body">
-        <h3><a href="/article/<?= e($r['slug']) ?>"><?= e($r['title']) ?></a></h3>
-        <span class="card-meta"><?= fmt_date($r['published_at']) ?></span>
+    <a href="/article/<?= e($r['slug']) ?>" class="related-item">
+      <?php if ($r['featured_image']): ?>
+      <img src="<?= e($r['featured_image']) ?>" alt="<?= e($r['title']) ?>" loading="lazy">
+      <?php else: ?><div class="related-placeholder"><i class="fas fa-newspaper"></i></div><?php endif ?>
+      <div class="related-info">
+        <h3><?= e($r['title']) ?></h3>
+        <span><?= fmt_date($r['published_at']) ?></span>
       </div>
-    </article>
+    </a>
     <?php endforeach ?>
   </div>
 </div>
