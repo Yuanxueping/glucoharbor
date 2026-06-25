@@ -1,0 +1,81 @@
+<%- include('partials/head') %>
+
+<section class="page-banner">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="/">Home</a> <i class="fas fa-chevron-right fa-xs"></i>
+      <% if (currentCategory) { %>
+      <a href="/articles">Articles</a> <i class="fas fa-chevron-right fa-xs"></i>
+      <span><%= currentCategory.name %></span>
+      <% } else { %>
+      <span>Articles</span>
+      <% } %>
+    </nav>
+    <h1><%= currentCategory ? currentCategory.name : 'Health Articles' %></h1>
+    <% if (currentCategory && currentCategory.description) { %><p><%= currentCategory.description %></p><% } %>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container layout-with-sidebar">
+    <div class="content-area">
+      <!-- Ad top -->
+      <% if (settings.ad_article_top_code) { %><div class="ad-slot"><%- settings.ad_article_top_code %></div><% } %>
+
+      <% if (articles.length === 0) { %>
+      <div class="empty-state"><i class="fas fa-newspaper"></i><p>No articles found.</p></div>
+      <% } else { %>
+      <div class="article-grid">
+        <% articles.forEach(function(a){ %>
+        <article class="article-card">
+          <a href="/article/<%= a.slug %>" class="card-img-link">
+            <% if (a.featured_image) { %>
+            <img src="<%= a.featured_image %>" alt="<%= a.title %>" loading="lazy">
+            <% } else { %>
+            <div class="card-img-placeholder"><i class="fas fa-newspaper"></i></div>
+            <% } %>
+          </a>
+          <div class="card-body">
+            <% if (a.category_name) { %><a href="/category/<%= a.category_slug %>" class="card-category"><%= a.category_name %></a><% } %>
+            <h2><a href="/article/<%= a.slug %>"><%= a.title %></a></h2>
+            <% if (a.excerpt) { %><p class="card-excerpt"><%= a.excerpt.substring(0,120) %>...</p><% } %>
+            <div class="card-meta">
+              <span><i class="fas fa-calendar-alt"></i> <%= dayjs(a.published_at).format('MMM D, YYYY') %></span>
+              <span><i class="fas fa-eye"></i> <%= a.views %></span>
+            </div>
+          </div>
+        </article>
+        <% }); %>
+      </div>
+      <!-- Pagination -->
+      <% if (pages > 1) { %>
+      <nav class="pagination" aria-label="Pagination">
+        <% const baseUrl = currentCategory ? '/category/' + currentCategory.slug : '/articles'; %>
+        <% if (page > 1) { %><a href="<%= baseUrl %>?page=<%= page-1 %>" class="page-btn"><i class="fas fa-chevron-left"></i></a><% } %>
+        <% for(let i=1; i<=pages; i++){ %>
+        <a href="<%= baseUrl %>?page=<%= i %>" class="page-btn <%= i===page?'active':'' %>"><%= i %></a>
+        <% } %>
+        <% if (page < pages) { %><a href="<%= baseUrl %>?page=<%= page+1 %>" class="page-btn"><i class="fas fa-chevron-right"></i></a><% } %>
+      </nav>
+      <% } %>
+      <% } %>
+    </div>
+
+    <aside class="sidebar">
+      <!-- Ad sidebar -->
+      <% if (settings.ad_sidebar_code) { %><div class="ad-slot widget"><%- settings.ad_sidebar_code %></div><% } %>
+      <div class="widget">
+        <h3 class="widget-title">Categories</h3>
+        <ul class="widget-list">
+          <% categories.forEach(function(cat){ %>
+          <li class="<%= currentCategory && currentCategory.id === cat.id ? 'active' : '' %>">
+            <a href="/category/<%= cat.slug %>"><%= cat.name %> <span class="count"><%= cat.article_count %></span></a>
+          </li>
+          <% }); %>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

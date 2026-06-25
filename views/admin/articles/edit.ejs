@@ -1,0 +1,176 @@
+<%- include('../partials/head') %>
+
+<!-- Quill Editor CSS -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+
+<div class="page-title">
+  <h1><%= article ? 'Edit Article' : 'New Article' %></h1>
+  <a href="/admin/articles" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+</div>
+
+<% if (error) { %>
+<div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<form method="post" action="<%= article ? '/admin/articles/' + article.id : '/admin/articles' %>" enctype="multipart/form-data" id="articleForm">
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="card-box">
+        <div class="mb-3">
+          <label class="form-label fw-bold">Title *</label>
+          <input type="text" name="title" class="form-control form-control-lg" value="<%= article ? article.title : '' %>" required placeholder="Article title...">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Slug</label>
+          <input type="text" name="slug" id="slugField" class="form-control" value="<%= article ? article.slug : '' %>" placeholder="auto-generated from title">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Excerpt</label>
+          <textarea name="excerpt" class="form-control" rows="3" placeholder="Brief description (used in article lists and SEO)"><%= article ? article.excerpt || '' : '' %></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Content *</label>
+          <div id="quillEditor" style="min-height:400px"><%= article ? article.content || '' : '' %></div>
+          <input type="hidden" name="content" id="contentInput">
+        </div>
+      </div>
+
+      <!-- SEO -->
+      <div class="card-box mt-3">
+        <h3 class="card-box-title"><i class="fas fa-search"></i> SEO Settings</h3>
+        <div class="mb-3">
+          <label class="form-label">Meta Title</label>
+          <input type="text" name="meta_title" class="form-control" value="<%= article ? article.meta_title || '' : '' %>" placeholder="Leave blank to use article title">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Meta Description</label>
+          <textarea name="meta_description" class="form-control" rows="2" placeholder="150-160 characters for best SEO"><%= article ? article.meta_description || '' : '' %></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Meta Keywords</label>
+          <input type="text" name="meta_keywords" class="form-control" value="<%= article ? article.meta_keywords || '' : '' %>" placeholder="keyword1, keyword2, ...">
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <!-- Publish Settings -->
+      <div class="card-box">
+        <h3 class="card-box-title">Publish</h3>
+        <div class="mb-3">
+          <label class="form-label">Status</label>
+          <select name="status" class="form-select">
+            <option value="draft" <%= (!article || article.status==='draft')?'selected':'' %>>Draft</option>
+            <option value="published" <%= (article && article.status==='published')?'selected':'' %>>Published</option>
+            <option value="archived" <%= (article && article.status==='archived')?'selected':'' %>>Archived</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="is_featured" value="1" id="isFeatured" <%= (article && article.is_featured)?'checked':'' %>>
+            <label class="form-check-label" for="isFeatured"><i class="fas fa-star text-warning"></i> Featured Article</label>
+          </div>
+        </div>
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Article</button>
+          <% if (article) { %>
+          <a href="/article/<%= article.slug %>" target="_blank" class="btn btn-outline-secondary"><i class="fas fa-eye"></i> Preview</a>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div class="card-box mt-3">
+        <h3 class="card-box-title">Category</h3>
+        <select name="category_id" class="form-select">
+          <option value="">— No Category —</option>
+          <% categories.forEach(function(c){ %>
+          <option value="<%= c.id %>" <%= (article && article.category_id == c.id)?'selected':'' %>><%= c.name %></option>
+          <% }); %>
+        </select>
+      </div>
+
+      <!-- Featured Image -->
+      <div class="card-box mt-3">
+        <h3 class="card-box-title">Featured Image</h3>
+        <% if (article && article.featured_image) { %>
+        <div class="current-image mb-2">
+          <img src="<%= article.featured_image %>" alt="Featured image" class="img-fluid rounded">
+        </div>
+        <% } %>
+        <input type="file" name="featured_image" class="form-control" accept="image/*">
+        <small class="text-muted">JPG, PNG, WebP. Max 10MB.</small>
+        <div class="mt-2">
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="pickImageBtn">
+            <i class="fas fa-image"></i> Or Enter URL
+          </button>
+          <div id="imageUrlBox" style="display:none" class="mt-2">
+            <input type="text" id="imageUrlInput" class="form-control form-control-sm" placeholder="https://...">
+            <button type="button" class="btn btn-sm btn-primary mt-1" id="setImageUrl">Set URL</button>
+          </div>
+          <input type="hidden" name="featured_image_url" id="featuredImageUrl" value="<%= article && article.featured_image ? article.featured_image : '' %>">
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+const quill = new Quill('#quillEditor', {
+  theme: 'snow',
+  modules: {
+    toolbar: [
+      [{ header: [1,2,3,4,false] }],
+      ['bold','italic','underline','strike'],
+      [{ list:'ordered'},{list:'bullet'}],
+      ['blockquote','code-block'],
+      ['link','image'],
+      [{ align:[] }],
+      [{ color:[] },{background:[]}],
+      ['clean']
+    ]
+  }
+});
+
+// Image upload handler
+quill.getModule('toolbar').addHandler('image', () => {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*';
+  input.onchange = async () => {
+    const fd = new FormData(); fd.append('image', input.files[0]);
+    const r = await fetch('/admin/upload/image', { method:'POST', body:fd });
+    const d = await r.json();
+    if (d.success) {
+      const range = quill.getSelection();
+      quill.insertEmbed(range.index, 'image', d.url);
+    }
+  };
+  input.click();
+});
+
+document.getElementById('articleForm').addEventListener('submit', function() {
+  document.getElementById('contentInput').value = quill.root.innerHTML;
+});
+
+// Auto-slug from title
+const titleInput = document.querySelector('input[name="title"]');
+const slugField = document.getElementById('slugField');
+titleInput.addEventListener('input', function() {
+  if (!slugField.dataset.manual) {
+    slugField.value = this.value.toLowerCase().replace(/[^a-z0-9一-龥]+/g, '-').replace(/^-|-$/g, '');
+  }
+});
+slugField.addEventListener('input', function(){ this.dataset.manual = '1'; });
+
+// Image URL picker
+document.getElementById('pickImageBtn').onclick = () => {
+  document.getElementById('imageUrlBox').style.display = 'block';
+};
+document.getElementById('setImageUrl').onclick = () => {
+  document.getElementById('featuredImageUrl').value = document.getElementById('imageUrlInput').value;
+  document.getElementById('imageUrlBox').style.display = 'none';
+};
+</script>
+
+<%- include('../partials/footer') %>

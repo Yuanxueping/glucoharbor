@@ -1,0 +1,74 @@
+<%- include('../partials/head') %>
+
+<div class="page-title">
+  <h1>Products</h1>
+  <div>
+    <button class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#addProductCatModal"><i class="fas fa-folder-plus"></i> Add Category</button>
+    <a href="/admin/products/new" class="btn btn-primary"><i class="fas fa-plus"></i> New Product</a>
+  </div>
+</div>
+
+<% if (locals.flash) { %><div class="alert alert-<%= flash.type %> alert-dismissible fade show"><%= flash.msg %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><% } %>
+
+<div class="card-box">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        <% if (products.length === 0) { %><tr><td colspan="6" class="text-center text-muted py-4">No products yet.</td></tr><% } %>
+        <% products.forEach(function(p){ %>
+        <tr>
+          <td><% if(p.image){ %><img src="<%= p.image %>" style="width:60px;height:45px;object-fit:cover;border-radius:4px"><% }else{ %><div style="width:60px;height:45px;background:#f0f4ff;border-radius:4px;display:flex;align-items:center;justify-content:center"><i class="fas fa-box text-muted"></i></div><% } %></td>
+          <td><strong><a href="/admin/products/<%= p.id %>/edit"><%= p.name %></a></strong><% if(p.badge){ %> <span class="badge bg-warning text-dark"><%= p.badge %></span><% } %></td>
+          <td><%= p.category_name || '-' %></td>
+          <td><% if(p.price){ %><strong>$<%= parseFloat(p.price).toFixed(2) %></strong><% if(p.original_price){ %> <del class="text-muted">$<%= parseFloat(p.original_price).toFixed(2) %></del><% } %><% }else{ %>-<% } %></td>
+          <td><span class="badge-status badge-<%= p.status %>"><%= p.status %></span></td>
+          <td>
+            <div class="btn-group btn-group-sm">
+              <a href="/admin/products/<%= p.id %>/edit" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
+              <a href="/product/<%= p.slug %>" target="_blank" class="btn btn-outline-secondary"><i class="fas fa-eye"></i></a>
+              <form method="post" action="/admin/products/<%= p.id %>/delete" class="d-inline" onsubmit="return confirm('Delete product?')">
+                <button type="submit" class="btn btn-outline-danger"><i class="fas fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <% if (pages > 1) { %>
+  <nav class="d-flex justify-content-center mt-3">
+    <ul class="pagination">
+      <% for(let i=1;i<=pages;i++){ %><li class="page-item <%= i===page?'active':'' %>"><a class="page-link" href="/admin/products?page=<%= i %>"><%= i %></a></li><% } %>
+    </ul>
+  </nav>
+  <% } %>
+</div>
+
+<!-- Product Categories -->
+<div class="card-box mt-3">
+  <h3 class="card-box-title">Product Categories</h3>
+  <div class="d-flex flex-wrap gap-2">
+    <% categories.forEach(function(c){ %><span class="badge bg-light text-dark border"><%= c.name %></span><% }); %>
+  </div>
+</div>
+
+<!-- Add Product Category Modal -->
+<div class="modal fade" id="addProductCatModal" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <form method="post" action="/admin/product-categories" class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">New Product Category</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,53 @@
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col footer-about">
+        <h3><i class="fas fa-heartbeat"></i> <%= settings.site_name || 'GlucoHarbor' %></h3>
+        <p><%= settings.site_description || '' %></p>
+        <div class="social-links">
+          <% if (settings.social_facebook) { %><a href="<%= settings.social_facebook %>" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a><% } %>
+          <% if (settings.social_twitter) { %><a href="<%= settings.social_twitter %>" target="_blank" rel="noopener"><i class="fab fa-x-twitter"></i></a><% } %>
+          <% if (settings.social_instagram) { %><a href="<%= settings.social_instagram %>" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a><% } %>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <ul>
+          <% navCategories.slice(0,6).forEach(function(cat){ %>
+          <li><a href="/category/<%= cat.slug %>"><%= cat.name %></a></li>
+          <% }); %>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <% footerPages.forEach(function(p){ %>
+          <li><a href="/page/<%= p.slug %>"><%= p.title %></a></li>
+          <% }); %>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="/articles">All Articles</a></li>
+          <li><a href="/products">Products</a></li>
+          <li><a href="/search">Search</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="disclaimer">
+        <i class="fas fa-circle-info"></i>
+        <small><%= settings.medical_disclaimer || '' %></small>
+      </div>
+      <p class="copyright">
+        <%= settings.footer_text || '© 2024 GlucoHarbor. All rights reserved.' %>
+        <% if (settings.icp_number) { %> &nbsp;|&nbsp; <%= settings.icp_number %><% } %>
+      </p>
+    </div>
+  </div>
+</footer>
+<script src="/js/frontend.js"></script>
+</body>
+</html>

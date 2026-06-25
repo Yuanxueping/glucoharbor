@@ -1,0 +1,83 @@
+<%- include('../partials/head', {flash: req && req.session ? req.session.flash : null}) %>
+
+<div class="page-title">
+  <h1>Articles</h1>
+  <a href="/admin/articles/new" class="btn btn-primary"><i class="fas fa-plus"></i> New Article</a>
+</div>
+
+<!-- Filters -->
+<div class="filter-row mb-3">
+  <form method="get" action="/admin/articles" class="d-flex gap-2 flex-wrap">
+    <input type="text" name="search" value="<%= search %>" placeholder="Search articles..." class="form-control w-auto">
+    <select name="status" class="form-select w-auto">
+      <option value="">All Status</option>
+      <option value="published" <%= status==='published'?'selected':'' %>>Published</option>
+      <option value="draft" <%= status==='draft'?'selected':'' %>>Draft</option>
+      <option value="archived" <%= status==='archived'?'selected':'' %>>Archived</option>
+    </select>
+    <button type="submit" class="btn btn-outline-primary"><i class="fas fa-search"></i> Filter</button>
+    <a href="/admin/articles" class="btn btn-outline-secondary">Reset</a>
+  </form>
+  <span class="text-muted"><%= total %> articles</span>
+</div>
+
+<div class="card-box">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Source</th>
+          <th>Views</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (articles.length === 0) { %>
+        <tr><td colspan="7" class="text-center text-muted py-4">No articles found.</td></tr>
+        <% } %>
+        <% articles.forEach(function(a){ %>
+        <tr>
+          <td>
+            <div class="article-title-cell">
+              <% if (a.is_featured) { %><i class="fas fa-star text-warning me-1" title="Featured"></i><% } %>
+              <a href="/admin/articles/<%= a.id %>/edit"><%= a.title.substring(0,70) %><%= a.title.length>70?'...':'' %></a>
+            </div>
+          </td>
+          <td><small><%= a.category_name || '-' %></small></td>
+          <td><span class="badge-status badge-<%= a.status %>"><%= a.status %></span></td>
+          <td><span class="source-badge source-<%= a.source %>"><%= a.source %></span></td>
+          <td><%= a.views %></td>
+          <td><small><%= a.published_at ? new Date(a.published_at).toLocaleDateString() : new Date(a.created_at).toLocaleDateString() %></small></td>
+          <td>
+            <div class="btn-group btn-group-sm">
+              <a href="/admin/articles/<%= a.id %>/edit" class="btn btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+              <a href="/article/<%= a.slug %>" target="_blank" class="btn btn-outline-secondary" title="View"><i class="fas fa-eye"></i></a>
+              <form method="post" action="/admin/articles/<%= a.id %>/delete" class="d-inline" onsubmit="return confirm('Delete this article?')">
+                <button type="submit" class="btn btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <!-- Pagination -->
+  <% if (pages > 1) { %>
+  <nav class="d-flex justify-content-center mt-3">
+    <ul class="pagination">
+      <% for(let i=1;i<=pages;i++){ %>
+      <li class="page-item <%= i===page?'active':'' %>">
+        <a class="page-link" href="/admin/articles?page=<%= i %>&status=<%= status %>&search=<%= encodeURIComponent(search) %>"><%= i %></a>
+      </li>
+      <% } %>
+    </ul>
+  </nav>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

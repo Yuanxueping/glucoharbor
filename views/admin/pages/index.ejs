@@ -1,0 +1,38 @@
+<%- include('../partials/head') %>
+
+<div class="page-title">
+  <h1>Pages</h1>
+  <a href="/admin/pages/new" class="btn btn-primary"><i class="fas fa-plus"></i> New Page</a>
+</div>
+
+<% if (locals.flash) { %><div class="alert alert-<%= flash.type %> alert-dismissible fade show"><%= flash.msg %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><% } %>
+
+<div class="card-box">
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead><tr><th>Title</th><th>Slug</th><th>Status</th><th>In Footer</th><th>Actions</th></tr></thead>
+      <tbody>
+        <% if (pages.length === 0) { %><tr><td colspan="5" class="text-center text-muted">No pages yet.</td></tr><% } %>
+        <% pages.forEach(function(p){ %>
+        <tr>
+          <td><strong><a href="/admin/pages/<%= p.id %>/edit"><%= p.title %></a></strong></td>
+          <td><code>/page/<%= p.slug %></code></td>
+          <td><span class="badge-status badge-<%= p.status %>"><%= p.status %></span></td>
+          <td><% if(p.in_footer){ %><i class="fas fa-check-circle text-success"></i><% }else{ %><i class="fas fa-times-circle text-muted"></i><% } %></td>
+          <td>
+            <div class="btn-group btn-group-sm">
+              <a href="/admin/pages/<%= p.id %>/edit" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
+              <a href="/page/<%= p.slug %>" target="_blank" class="btn btn-outline-secondary"><i class="fas fa-eye"></i></a>
+              <form method="post" action="/admin/pages/<%= p.id %>/delete" class="d-inline" onsubmit="return confirm('Delete this page?')">
+                <button type="submit" class="btn btn-outline-danger"><i class="fas fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

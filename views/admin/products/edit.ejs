@@ -1,0 +1,81 @@
+<%- include('../partials/head') %>
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+
+<div class="page-title">
+  <h1><%= product ? 'Edit Product' : 'New Product' %></h1>
+  <a href="/admin/products" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+</div>
+
+<% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+
+<form method="post" action="<%= product ? '/admin/products/' + product.id : '/admin/products' %>" enctype="multipart/form-data" id="productForm">
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="card-box">
+        <div class="mb-3"><label class="form-label fw-bold">Product Name *</label><input type="text" name="name" class="form-control form-control-lg" value="<%= product ? product.name : '' %>" required></div>
+        <div class="mb-3"><label class="form-label">Slug</label><input type="text" name="slug" class="form-control" value="<%= product ? product.slug : '' %>"></div>
+        <div class="mb-3"><label class="form-label">Short Description</label><textarea name="short_desc" class="form-control" rows="2" placeholder="One-line summary"><%= product ? product.short_desc || '' : '' %></textarea></div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Full Description</label>
+          <div id="quillEditor" style="min-height:300px"><%= product ? product.description || '' : '' %></div>
+          <input type="hidden" name="description" id="descInput">
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card-box">
+        <h3 class="card-box-title">Pricing</h3>
+        <div class="mb-2"><label class="form-label">Price</label><div class="input-group"><span class="input-group-text">$</span><input type="number" name="price" class="form-control" step="0.01" min="0" value="<%= product && product.price ? product.price : '' %>"></div></div>
+        <div class="mb-2"><label class="form-label">Original Price (for discount)</label><div class="input-group"><span class="input-group-text">$</span><input type="number" name="original_price" class="form-control" step="0.01" min="0" value="<%= product && product.original_price ? product.original_price : '' %>"></div></div>
+        <div class="mb-2"><label class="form-label">Currency</label><input type="text" name="currency" class="form-control" value="<%= product ? product.currency || 'USD' : 'USD' %>"></div>
+      </div>
+
+      <div class="card-box mt-3">
+        <h3 class="card-box-title">Settings</h3>
+        <div class="mb-2"><label class="form-label">Category</label>
+          <select name="category_id" class="form-select">
+            <option value="">— None —</option>
+            <% categories.forEach(function(c){ %><option value="<%= c.id %>" <%= (product && product.category_id==c.id)?'selected':'' %>><%= c.name %></option><% }); %>
+          </select>
+        </div>
+        <div class="mb-2"><label class="form-label">Status</label>
+          <select name="status" class="form-select">
+            <option value="active" <%= (!product || product.status==='active')?'selected':'' %>>Active</option>
+            <option value="inactive" <%= (product && product.status==='inactive')?'selected':'' %>>Inactive</option>
+          </select>
+        </div>
+        <div class="mb-2"><label class="form-label">Badge (e.g. "Best Seller")</label><input type="text" name="badge" class="form-control" value="<%= product ? product.badge || '' : '' %>"></div>
+        <div class="mb-2"><label class="form-label">Sort Order</label><input type="number" name="sort_order" class="form-control" value="<%= product ? product.sort_order || 0 : 0 %>"></div>
+        <div class="mb-2"><label class="form-label">Affiliate / Buy URL</label><input type="url" name="affiliate_url" class="form-control" placeholder="https://..." value="<%= product ? product.affiliate_url || '' : '' %>"></div>
+      </div>
+
+      <div class="card-box mt-3">
+        <h3 class="card-box-title">Product Image</h3>
+        <% if (product && product.image) { %><img src="<%= product.image %>" class="img-fluid rounded mb-2"><% } %>
+        <input type="file" name="image" class="form-control" accept="image/*">
+        <small class="text-muted">JPG, PNG, WebP. Max 10MB.</small>
+      </div>
+
+      <div class="card-box mt-3">
+        <h3 class="card-box-title">SEO</h3>
+        <div class="mb-2"><label class="form-label">Meta Title</label><input type="text" name="meta_title" class="form-control" value="<%= product ? product.meta_title || '' : '' %>"></div>
+        <div class="mb-2"><label class="form-label">Meta Description</label><textarea name="meta_description" class="form-control" rows="2"><%= product ? product.meta_description || '' : '' %></textarea></div>
+      </div>
+
+      <div class="d-grid mt-3">
+        <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> Save Product</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+const quill = new Quill('#quillEditor', { theme: 'snow', modules: { toolbar: [[{header:[1,2,3,false]}],['bold','italic'],['link','image'],[{list:'ordered'},{list:'bullet'}],['clean']] } });
+document.getElementById('productForm').addEventListener('submit', function() {
+  document.getElementById('descInput').value = quill.root.innerHTML;
+});
+</script>
+
+<%- include('../partials/footer') %>
