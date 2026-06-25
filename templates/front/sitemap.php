@@ -1,7 +1,7 @@
 <?php
 require_once ROOT_PATH . '/includes/bootstrap.php';
 header('Content-Type: application/xml; charset=utf-8');
-$site_url  = rtrim(setting('site_url'),'https://glucoharbor.com');
+$site_url  = rtrim(setting('site_url'), '/');
 $articles  = db_fetchAll("SELECT slug,updated_at FROM articles WHERE status='published' ORDER BY updated_at DESC");
 $cats      = db_fetchAll("SELECT slug FROM categories ORDER BY sort_order");
 echo '<?xml version="1.0" encoding="UTF-8"?>';
