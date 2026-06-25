@@ -51,8 +51,9 @@ require __DIR__ . '/_layout.php';
       </div>
       <div>
         <label class="form-label fw-semibold">Content</label>
-        <div id="editor" style="height:420px;border:1px solid #dee2e6;border-radius:6px"><?= $pg['content'] ?? '' ?></div>
-        <textarea name="content" id="content-input" hidden><?= $pg['content'] ?? '' ?></textarea>
+        <div id="editor" style="height:420px;border:1px solid #dee2e6;border-radius:6px"></div>
+        <textarea name="content" id="content-input" hidden></textarea>
+        <script>window.__articleContent = <?= json_encode($pg['content'] ?? '') ?>;</script>
       </div>
     </div>
 
@@ -97,6 +98,9 @@ var quill = new Quill('#editor', {
   theme: 'snow',
   modules: { toolbar: [[{header:[1,2,3,false]}],['bold','italic','underline'],[{list:'ordered'},{list:'bullet'}],['blockquote'],['link'],['clean']] }
 });
+if (window.__articleContent) {
+  quill.root.innerHTML = window.__articleContent;
+}
 document.querySelector('form').addEventListener('submit', function() {
   document.getElementById('content-input').value = quill.root.innerHTML;
 });

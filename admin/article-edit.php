@@ -75,8 +75,9 @@ require __DIR__ . '/_layout.php';
       </div>
       <div>
         <label class="form-label fw-semibold">Content *</label>
-        <div id="editor" style="height:480px;border:1px solid #dee2e6;border-radius:6px"><?= $a['content'] ?? '' ?></div>
-        <textarea name="content" id="content-input" hidden><?= $a['content'] ?? '' ?></textarea>
+        <div id="editor" style="height:480px;border:1px solid #dee2e6;border-radius:6px"></div>
+        <textarea name="content" id="content-input" hidden></textarea>
+        <script>window.__articleContent = <?= json_encode($a['content'] ?? '') ?>;</script>
       </div>
     </div>
 
@@ -178,7 +179,9 @@ var quill = new Quill('#editor', {
     ]
   }
 });
-// Sync on form submit
+if (window.__articleContent) {
+  quill.root.innerHTML = window.__articleContent;
+}
 document.querySelector('form').addEventListener('submit', function() {
   document.getElementById('content-input').value = quill.root.innerHTML;
 });

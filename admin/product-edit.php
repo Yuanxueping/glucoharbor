@@ -74,8 +74,9 @@ require __DIR__ . '/_layout.php';
       </div>
       <div>
         <label class="form-label fw-semibold">Full Description</label>
-        <div id="editor" style="height:340px;border:1px solid #dee2e6;border-radius:6px"><?= $p['description'] ?? '' ?></div>
-        <textarea name="description" id="desc-input" hidden><?= $p['description'] ?? '' ?></textarea>
+        <div id="editor" style="height:340px;border:1px solid #dee2e6;border-radius:6px"></div>
+        <textarea name="description" id="desc-input" hidden></textarea>
+        <script>window.__articleContent = <?= json_encode($p['description'] ?? '') ?>;</script>
       </div>
     </div>
 
@@ -159,6 +160,9 @@ var quill = new Quill('#editor', {
   theme: 'snow',
   modules: { toolbar: [[{header:[1,2,3,false]}],['bold','italic','underline'],[{list:'ordered'},{list:'bullet'}],['link','image'],['clean']] }
 });
+if (window.__articleContent) {
+  quill.root.innerHTML = window.__articleContent;
+}
 document.querySelector('form').addEventListener('submit', function() {
   document.getElementById('desc-input').value = quill.root.innerHTML;
 });
