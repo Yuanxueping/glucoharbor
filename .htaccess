@@ -1,0 +1,14 @@
+Options -Indexes
+RewriteEngine On
+
+# 保护敏感文件
+RewriteRule ^includes/ - [F,L]
+RewriteRule ^config\.php - [F,L]
+
+# 上传目录禁止执行PHP
+RewriteRule ^uploads/.*\.php - [F,L]
+
+# 伪静态路由
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
