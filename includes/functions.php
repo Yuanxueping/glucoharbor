@@ -55,16 +55,19 @@ function unique_slug($table, $slug, $id = 0) {
 
 // ── 上传 ──────────────────────────────────────────
 function upload_image($file_key) {
-    if (empty($_FILES[$file_key]['tmp_name'])) return null;
+    if (empty($_FILES[$file_key]['tmp_name'])) return ['error'=>'No file uploaded','url'=>''];
     $f = $_FILES[$file_key];
     $allowed = ['image/jpeg','image/png','image/gif','image/webp'];
-    if (!in_array($f['type'], $allowed)) return null;
-    if ($f['size'] > 10 * 1024 * 1024) return null;
-    $ext = pathinfo($f['name'], PATHINFO_EXTENSION);
-    $name = uniqid('img_', true) . '.' . strtolower($ext);
+    if (!in_array($f['type'], $allowed)) return ['error'=>'Invalid file type. JPG/PNG/WebP/GIF only.','url'=>''];
+    if ($f['size'] > 5 * 1024 * 1024) return ['error'=>'File too large (max 5MB).','url'=>''];
+    if (!is_dir(UPLOADS_PATH)) {
+        mkdir(UPLOADS_PATH, 0755, true);
+    }
+    $ext  = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
+    $name = uniqid('img_', true) . '.' . $ext;
     $dest = UPLOADS_PATH . '/' . $name;
-    if (!move_uploaded_file($f['tmp_name'], $dest)) return null;
-    return UPLOADS_URL . '/' . $name;
+    if (!move_uploaded_file($f['tmp_name'], $dest)) return ['error'=>'Failed to save file. Check uploads/ directory permissions.','url'=>''];
+    return ['error'=>'', 'url'=> UPLOADS_URL . '/' . $name];
 }
 
 // ── 分页 ──────────────────────────────────────────
