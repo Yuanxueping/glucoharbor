@@ -153,11 +153,14 @@ img{max-width:100%;height:auto}
 .article-header{background:linear-gradient(135deg,var(--blue),#0c3f9e);color:#fff;padding:40px 0}
 .article-header h1{font-size:32px;font-weight:800;line-height:1.3;margin:12px 0}
 .article-meta{display:flex;gap:20px;font-size:14px;opacity:.85;flex-wrap:wrap}
-.article-featured-img{margin:0 0 28px}
-.article-featured-img img{width:100%;border-radius:12px;max-height:480px;object-fit:cover}
+.article-featured-img{margin:0 0 28px;overflow:hidden}
+.article-featured-img img{width:100%;border-radius:12px;max-height:480px;object-fit:cover;display:block}
 
-.article-body{font-size:17px;line-height:1.85;overflow-x:hidden}
-.article-body img{max-width:100%;height:auto;border-radius:8px}
+.article-body{font-size:17px;line-height:1.85;overflow:hidden;word-break:break-word}
+.article-body img{max-width:100%;height:auto;border-radius:8px;display:block}
+.article-body .gd-wrap{max-width:100% !important;padding:0 !important;overflow:hidden}
+.article-body table{max-width:100%;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.content-area{min-width:0;overflow:hidden}
 .article-body h2{font-size:24px;font-weight:700;margin:32px 0 16px;padding-bottom:8px;border-bottom:2px solid var(--blue)}
 .article-body h3{font-size:20px;font-weight:700;margin:24px 0 12px}
 .article-body h4{font-size:18px;font-weight:600;margin:20px 0 10px}
@@ -266,7 +269,7 @@ img{max-width:100%;height:auto}
   .has-dropdown .dropdown{position:static;box-shadow:none;border:none;padding-left:16px;display:none}
   .has-dropdown.open .dropdown{display:block}
   .header-search{display:none}
-  .nav-search-mobile{padding:10px 16px;border-top:1px solid var(--border);margin-top:4px}
+  .nav-search-mobile{display:block;padding:10px 16px;border-top:1px solid var(--border);margin-top:4px}
   .nav-search-mobile form{display:flex;gap:6px}
   .nav-search-mobile input{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;outline:none}
   .nav-search-mobile button{padding:8px 12px;background:var(--blue);color:#fff;border:none;border-radius:6px;cursor:pointer}
