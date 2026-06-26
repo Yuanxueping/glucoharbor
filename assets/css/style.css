@@ -286,3 +286,33 @@ img{max-width:100%;height:auto}
   .hero-title{font-size:20px}
   .article-header h1{font-size:22px}
 }
+
+/* ── AI 文章内容 gd-* 组件移动端适配 ── */
+@media(max-width:600px){
+  /* 防止整个文章内容溢出 */
+  .article-body{overflow-x:hidden}
+  .article-body *{max-width:100%;box-sizing:border-box}
+
+  /* 统计数字三列→两列 */
+  .gd-stats{grid-template-columns:1fr 1fr !important}
+  .gd-stats .gd-stat-box:last-child{grid-column:1/-1}
+
+  /* 对比卡片双列→单列 */
+  .gd-compare-grid{grid-template-columns:1fr !important}
+
+  /* 表格横向滚动 */
+  .gd-table-wrap{overflow-x:auto !important;-webkit-overflow-scrolling:touch}
+  .gd-table-wrap table{min-width:480px}
+
+  /* 步骤列表 */
+  .gd-steps{gap:10px !important}
+
+  /* 字号缩小 */
+  .gd-h1{font-size:22px !important}
+  .gd-h2{font-size:18px !important}
+  .gd-lead{font-size:15px !important}
+  .gd-wrap{padding:0 2px !important}
+
+  /* hero区上下间距 */
+  .gd-hero{padding:32px 0 24px !important}
+}
