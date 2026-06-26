@@ -64,6 +64,12 @@ $cur_path   = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         </ul>
       </li>
       <li><a href="/products" <?= strpos($cur_path,'/product')===0?'class="active"':'' ?>>Products</a></li>
+      <li class="nav-search-mobile">
+        <form action="/search" method="get" role="search">
+          <input type="text" name="q" placeholder="Search..." aria-label="Search" value="<?= e($_GET['q']??'') ?>">
+          <button type="submit" aria-label="Search"><i class="fas fa-search"></i></button>
+        </form>
+      </li>
     </ul>
   </nav>
   <div class="header-search">
