@@ -3,7 +3,7 @@ require_once ROOT_PATH . '/includes/bootstrap.php';
 $per    = (int)setting('products_per_page') ?: 12;
 $page   = max(1,(int)($_GET['page']??1));
 $cat_id = (int)($_GET['category']??0);
-$where  = $cat_id ? "p.status='active' AND p.category_id=$cat_id" : "p.status='active'";
+$where  = $cat_id ? "p.is_active=1 AND p.category_id=$cat_id" : "p.is_active=1";
 $total  = db_count("SELECT COUNT(*) FROM products p WHERE $where");
 $pg     = paginate($total,$per,$page);
 $list   = db_fetchAll("SELECT p.*,pc.name cat_name FROM products p LEFT JOIN product_categories pc ON p.category_id=pc.id WHERE $where ORDER BY p.sort_order,p.created_at DESC LIMIT $per OFFSET {$pg['offset']}");
@@ -40,11 +40,15 @@ require ROOT_PATH.'/templates/front/_head.php';
       <div class="prod-body">
         <?php if ($p['cat_name']): ?><span class="prod-cat"><?= e($p['cat_name']) ?></span><?php endif ?>
         <h2><a href="/product/<?= e($p['slug']) ?>"><?= e($p['name']) ?></a></h2>
-        <?php if ($p['short_desc']): ?><p><?= e(mb_substr($p['short_desc'],0,100)) ?>...</p><?php endif ?>
+        <?php if ($p['short_description']): ?><p><?= e(mb_substr($p['short_description'],0,100)) ?>...</p><?php endif ?>
         <div class="price-row">
           <?php if ($p['price']): ?>
+          <?php if ($p['sale_price']): ?>
+          <span class="price"><?= e($p['currency']?:'$') ?><?= number_format($p['sale_price'],2) ?></span>
+          <span class="price-orig"><?= e($p['currency']?:'$') ?><?= number_format($p['price'],2) ?></span>
+          <?php else: ?>
           <span class="price"><?= e($p['currency']?:'$') ?><?= number_format($p['price'],2) ?></span>
-          <?php if ($p['original_price']): ?><span class="price-orig"><?= e($p['currency']?:'$') ?><?= number_format($p['original_price'],2) ?></span><?php endif ?>
+          <?php endif ?>
           <?php endif ?>
           <?php if ($p['affiliate_url']): ?>
           <a href="<?= e($p['affiliate_url']) ?>" target="_blank" rel="noopener sponsored" class="btn-buy">Buy Now <i class="fas fa-external-link-alt fa-xs"></i></a>

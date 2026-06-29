@@ -336,5 +336,4 @@ img{max-width:100%;height:auto}
 .ymal-sale{color:var(--green);margin-right:6px}
 .ymal-orig{color:var(--muted);text-decoration:line-through;font-weight:400;font-size:12px}
 .ymal-btn{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--blue);margin-top:4px}
-@media(max-width:768px){.you-may-like-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:480px){.you-may-like-grid{grid-template-columns:1fr}}
+@media(max-width:768px){.you-may-like-grid{grid-template-columns:repeat(2,1fr);gap:12px}}

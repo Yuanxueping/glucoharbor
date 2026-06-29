@@ -37,10 +37,12 @@ require ROOT_PATH.'/templates/front/_head.php';
       <?php if ($p['short_description']): ?><p style="color:#6b7280;font-size:16px;margin:12px 0 20px"><?= e($p['short_description']) ?></p><?php endif ?>
       <?php if ($p['price']): ?>
       <div class="price-lg">
-        <span class="price-big"><?= e($p['currency']?:'$') ?><?= number_format($p['price'],2) ?></span>
         <?php if ($p['sale_price']): ?>
-        <span class="price-orig-big"><?= e($p['currency']?:'$') ?><?= number_format($p['sale_price'],2) ?></span>
+        <span class="price-big"><?= e($p['currency']?:'$') ?><?= number_format($p['sale_price'],2) ?></span>
+        <span class="price-orig-big"><?= e($p['currency']?:'$') ?><?= number_format($p['price'],2) ?></span>
         <span class="discount">-<?= round((1-$p['sale_price']/$p['price'])*100) ?>%</span>
+        <?php else: ?>
+        <span class="price-big"><?= e($p['currency']?:'$') ?><?= number_format($p['price'],2) ?></span>
         <?php endif ?>
       </div>
       <?php endif ?>
