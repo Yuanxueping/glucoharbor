@@ -35,13 +35,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $image = '';
     }
 
+    // Handle gallery uploads
+    $gallery = json_decode($p['gallery'] ?? '[]', true) ?: [];
+    // Remove gallery items marked for deletion
+    $remove_gallery = $_POST['remove_gallery'] ?? [];
+    if ($remove_gallery) {
+        $gallery = array_values(array_filter($gallery, fn($url) => !in_array($url, $remove_gallery)));
+    }
+    // Upload new gallery images
+    if (!empty($_FILES['gallery_new']['name'][0])) {
+        foreach ($_FILES['gallery_new']['name'] as $i => $fname) {
+            if (!$fname) continue;
+            $gfile = [
+                'name'     => $_FILES['gallery_new']['name'][$i],
+                'type'     => $_FILES['gallery_new']['type'][$i],
+                'tmp_name' => $_FILES['gallery_new']['tmp_name'][$i],
+                'error'    => $_FILES['gallery_new']['error'][$i],
+                'size'     => $_FILES['gallery_new']['size'][$i],
+            ];
+            $_FILES['_gimg'] = $gfile;
+            $up = upload_image('_gimg');
+            if (!$up['error']) $gallery[] = $up['url'];
+        }
+    }
+    $gallery_json = json_encode(array_values($gallery));
+
     if ($p) {
-        db_query("UPDATE products SET name=?,slug=?,description=?,short_description=?,category_id=?,image=?,price=?,sale_price=?,affiliate_url=?,is_featured=?,is_active=?,meta_title=?,meta_description=? WHERE id=?",
-            [$name,$slug,$description,$short_desc,$category_id,$image,$price,$sale_price,$affiliate_url,$is_featured,$is_active,$meta_title,$meta_desc,$id]);
+        db_query("UPDATE products SET name=?,slug=?,description=?,short_description=?,category_id=?,image=?,gallery=?,price=?,sale_price=?,affiliate_url=?,is_featured=?,is_active=?,meta_title=?,meta_description=? WHERE id=?",
+            [$name,$slug,$description,$short_desc,$category_id,$image,$gallery_json,$price,$sale_price,$affiliate_url,$is_featured,$is_active,$meta_title,$meta_desc,$id]);
         flash('success','Product updated.');
     } else {
-        $new_id = db_insert("INSERT INTO products(name,slug,description,short_description,category_id,image,price,sale_price,affiliate_url,is_featured,is_active,meta_title,meta_description) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-            [$name,$slug,$description,$short_desc,$category_id,$image,$price,$sale_price,$affiliate_url,$is_featured,$is_active,$meta_title,$meta_desc]);
+        $new_id = db_insert("INSERT INTO products(name,slug,description,short_description,category_id,image,gallery,price,sale_price,affiliate_url,is_featured,is_active,meta_title,meta_description) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            [$name,$slug,$description,$short_desc,$category_id,$image,$gallery_json,$price,$sale_price,$affiliate_url,$is_featured,$is_active,$meta_title,$meta_desc]);
         flash('success','Product created.');
         redirect('/admin/product-edit.php?id='.$new_id);
     }
@@ -137,7 +162,7 @@ require __DIR__ . '/_layout.php';
       <small class="text-muted">Visitors will be sent to this URL when clicking "Buy Now"</small>
     </div>
 
-    <div class="card-box">
+    <div class="card-box mb-3">
       <div class="card-box-title">Product Image</div>
       <?php if (!empty($p['image'])): ?>
       <img src="<?= e($p['image']) ?>" class="img-fluid rounded mb-2" style="max-height:160px;object-fit:cover;width:100%">
@@ -148,6 +173,25 @@ require __DIR__ . '/_layout.php';
       <?php endif ?>
       <input type="file" name="image" class="form-control" accept="image/*">
       <small class="text-muted">JPG/PNG/WebP, max 5MB</small>
+    </div>
+
+    <div class="card-box">
+      <div class="card-box-title">Product Gallery</div>
+      <?php
+        $cur_gallery = json_decode($p['gallery'] ?? '[]', true) ?: [];
+        foreach ($cur_gallery as $gurl):
+      ?>
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <img src="<?= e($gurl) ?>" style="width:64px;height:48px;object-fit:cover;border-radius:4px">
+        <div class="flex-grow-1 text-truncate small text-muted"><?= e(basename($gurl)) ?></div>
+        <div class="form-check">
+          <input type="checkbox" name="remove_gallery[]" class="form-check-input" value="<?= e($gurl) ?>" id="rg_<?= md5($gurl) ?>">
+          <label class="form-check-label text-danger small" for="rg_<?= md5($gurl) ?>">Remove</label>
+        </div>
+      </div>
+      <?php endforeach ?>
+      <input type="file" name="gallery_new[]" class="form-control mt-2" accept="image/*" multiple>
+      <small class="text-muted">Select multiple images. JPG/PNG/WebP, max 5MB each.</small>
     </div>
   </div>
 </div>

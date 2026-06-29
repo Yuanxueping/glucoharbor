@@ -79,6 +79,46 @@ require ROOT_PATH . '/templates/front/_head.php';
 </aside>
 </div>
 
+<?php
+$related_products = db_fetchAll("SELECT id,name,slug,image,price,sale_price,currency,affiliate_url,badge FROM products WHERE is_active=1 AND is_featured=1 ORDER BY sort_order,id LIMIT 4");
+if (!$related_products) {
+    $related_products = db_fetchAll("SELECT id,name,slug,image,price,sale_price,currency,affiliate_url,badge FROM products WHERE is_active=1 ORDER BY sort_order,id LIMIT 4");
+}
+?>
+<?php if ($related_products): ?>
+<section class="you-may-like-section">
+<div class="container">
+  <h2 class="section-title">You May Also Like</h2>
+  <div class="you-may-like-grid">
+    <?php foreach ($related_products as $rp): ?>
+    <a href="/product/<?= e($rp['slug']) ?>" class="ymal-card">
+      <div class="ymal-img">
+        <?php if ($rp['image']): ?>
+        <img src="<?= e($rp['image']) ?>" alt="<?= e($rp['name']) ?>" loading="lazy">
+        <?php else: ?><div class="ymal-placeholder"><i class="fas fa-box-open"></i></div><?php endif ?>
+        <?php if ($rp['badge']): ?><span class="ymal-badge"><?= e($rp['badge']) ?></span><?php endif ?>
+      </div>
+      <div class="ymal-info">
+        <h3><?= e($rp['name']) ?></h3>
+        <?php if ($rp['price']): ?>
+        <div class="ymal-price">
+          <?php if ($rp['sale_price']): ?>
+          <span class="ymal-sale"><?= e($rp['currency']?:'$') ?><?= number_format($rp['sale_price'],2) ?></span>
+          <span class="ymal-orig"><?= e($rp['currency']?:'$') ?><?= number_format($rp['price'],2) ?></span>
+          <?php else: ?>
+          <span><?= e($rp['currency']?:'$') ?><?= number_format($rp['price'],2) ?></span>
+          <?php endif ?>
+        </div>
+        <?php endif ?>
+        <?php if ($rp['affiliate_url']): ?><span class="ymal-btn">View Deal <i class="fas fa-arrow-right fa-xs"></i></span><?php endif ?>
+      </div>
+    </a>
+    <?php endforeach ?>
+  </div>
+</div>
+</section>
+<?php endif ?>
+
 <?php if ($related): ?>
 <section class="related-section">
 <div class="container">
