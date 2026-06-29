@@ -3,7 +3,7 @@ require_once ROOT_PATH . '/includes/bootstrap.php';
 $per_page = (int)setting('articles_per_page') ?: 9;
 $featured = db_fetchAll("SELECT a.*,c.name cat_name,c.slug cat_slug FROM articles a LEFT JOIN categories c ON a.category_id=c.id WHERE a.status='published' AND a.is_featured=1 ORDER BY a.published_at DESC LIMIT 5");
 $recent   = db_fetchAll("SELECT a.*,c.name cat_name,c.slug cat_slug FROM articles a LEFT JOIN categories c ON a.category_id=c.id WHERE a.status='published' ORDER BY a.published_at DESC LIMIT $per_page");
-$products = db_fetchAll("SELECT p.*,pc.name cat_name FROM products p LEFT JOIN product_categories pc ON p.category_id=pc.id WHERE p.status='active' ORDER BY p.sort_order,p.created_at DESC LIMIT 4");
+$products = db_fetchAll("SELECT p.*,pc.name cat_name FROM products p LEFT JOIN product_categories pc ON p.category_id=pc.id WHERE p.is_active=1 ORDER BY p.sort_order,p.created_at DESC LIMIT 4");
 $cats     = nav_categories();
 
 $page_title = setting('site_tagline') ?: 'Health Information';
@@ -116,11 +116,15 @@ require ROOT_PATH . '/templates/front/_head.php';
       <div class="prod-body">
         <?php if ($p['cat_name']): ?><span class="prod-cat"><?= e($p['cat_name']) ?></span><?php endif ?>
         <h3><a href="/product/<?= e($p['slug']) ?>"><?= e($p['name']) ?></a></h3>
-        <?php if ($p['short_desc']): ?><p><?= e(mb_substr($p['short_desc'],0,80)) ?>...</p><?php endif ?>
+        <?php if ($p['short_description']): ?><p><?= e(mb_substr($p['short_description'],0,80)) ?>...</p><?php endif ?>
         <div class="price-row">
           <?php if ($p['price']): ?>
+          <?php if ($p['sale_price']): ?>
+          <span class="price"><?= e($p['currency']?:'$') ?><?= number_format($p['sale_price'],2) ?></span>
+          <span class="price-orig"><?= e($p['currency']?:'$') ?><?= number_format($p['price'],2) ?></span>
+          <?php else: ?>
           <span class="price"><?= e($p['currency']?:'$') ?><?= number_format($p['price'],2) ?></span>
-          <?php if ($p['original_price']): ?><span class="price-orig"><?= e($p['currency']?:'$') ?><?= number_format($p['original_price'],2) ?></span><?php endif ?>
+          <?php endif ?>
           <?php endif ?>
           <?php if ($p['affiliate_url']): ?>
           <a href="<?= e($p['affiliate_url']) ?>" target="_blank" rel="noopener sponsored" class="btn-buy">Buy Now</a>
