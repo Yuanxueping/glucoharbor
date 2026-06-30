@@ -12,6 +12,10 @@ $admin_title = $a ? 'Edit Article' : 'New Article';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title       = trim($_POST['title'] ?? '');
     $content     = $_POST['content'] ?? '';
+    // If Quill submitted empty/whitespace-only content, keep existing content
+    if ($a && trim(strip_tags($content)) === '') {
+        $content = $a['content'];
+    }
     $excerpt     = trim($_POST['excerpt'] ?? '');
     $category_id = (int)($_POST['category_id'] ?? 0) ?: null;
     $status      = in_array($_POST['status'] ?? '', ['draft','published','archived']) ? $_POST['status'] : 'draft';
@@ -74,8 +78,15 @@ require __DIR__ . '/_layout.php';
         <textarea name="excerpt" class="form-control" rows="2" placeholder="Brief summary shown in article lists..."><?= e($a['excerpt'] ?? '') ?></textarea>
       </div>
       <div>
-        <label class="form-label fw-semibold">Content *</label>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label class="form-label fw-semibold mb-0">Content *</label>
+          <button type="button" id="toggle-source" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-code"></i> Source HTML
+          </button>
+        </div>
         <div id="editor" style="height:480px;border:1px solid #dee2e6;border-radius:6px"></div>
+        <textarea id="source-editor" class="form-control font-monospace" rows="20"
+          style="display:none;font-size:12px;height:480px;resize:vertical"></textarea>
         <textarea name="content" id="content-input" hidden></textarea>
         <script>window.__articleContent = <?= json_encode($a['content'] ?? '') ?>;</script>
       </div>
@@ -179,11 +190,43 @@ var quill = new Quill('#editor', {
     ]
   }
 });
+
+var sourceMode = false;
+var sourceEditor = document.getElementById('source-editor');
+var toggleBtn   = document.getElementById('toggle-source');
+
+// Load content — use dangerouslyPasteHTML for better HTML preservation
 if (window.__articleContent) {
-  quill.root.innerHTML = window.__articleContent;
+  quill.clipboard.dangerouslyPasteHTML(window.__articleContent);
+  sourceEditor.value = window.__articleContent;
 }
+
+toggleBtn.addEventListener('click', function() {
+  sourceMode = !sourceMode;
+  if (sourceMode) {
+    // Switch to source: copy Quill HTML → textarea
+    sourceEditor.value = quill.root.innerHTML;
+    document.getElementById('editor').style.display = 'none';
+    sourceEditor.style.display = 'block';
+    toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Visual';
+    toggleBtn.classList.replace('btn-outline-secondary','btn-outline-primary');
+  } else {
+    // Switch to visual: paste source HTML back into Quill
+    quill.clipboard.dangerouslyPasteHTML(sourceEditor.value);
+    document.getElementById('editor').style.display = 'block';
+    sourceEditor.style.display = 'none';
+    toggleBtn.innerHTML = '<i class="fas fa-code"></i> Source HTML';
+    toggleBtn.classList.replace('btn-outline-primary','btn-outline-secondary');
+  }
+});
+
 document.querySelector('form').addEventListener('submit', function() {
-  document.getElementById('content-input').value = quill.root.innerHTML;
+  // Always save from whichever mode is active
+  if (sourceMode) {
+    document.getElementById('content-input').value = sourceEditor.value;
+  } else {
+    document.getElementById('content-input').value = quill.root.innerHTML;
+  }
 });
 </script>
 <?php require __DIR__ . '/_layout_end.php'; ?>
