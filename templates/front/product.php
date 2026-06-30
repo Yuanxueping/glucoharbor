@@ -35,6 +35,7 @@ require ROOT_PATH.'/templates/front/_head.php';
       <?php if ($p['cat_name']): ?><span class="prod-cat"><?= e($p['cat_name']) ?></span><?php endif ?>
       <h1><?= e($p['name']) ?></h1>
       <?php if ($p['short_description']): ?><p style="color:#6b7280;font-size:16px;margin:12px 0 20px"><?= e($p['short_description']) ?></p><?php endif ?>
+      <?php if ($p['rating']): ?><div style="margin-bottom:16px"><?= star_rating($p['rating'], $p['review_count']) ?></div><?php endif ?>
       <?php if ($p['price']): ?>
       <div class="price-lg">
         <?php if ($p['sale_price']): ?>
@@ -48,7 +49,7 @@ require ROOT_PATH.'/templates/front/_head.php';
       <?php endif ?>
       <?php if ($p['affiliate_url']): ?>
       <a href="<?= e($p['affiliate_url']) ?>" target="_blank" rel="noopener sponsored" class="btn-buy-lg">
-        <i class="fas fa-shopping-cart"></i> Buy Now
+        <i class="fab fa-amazon"></i> View on Amazon
       </a>
       <?php endif ?>
     </div>

@@ -117,6 +117,7 @@ require ROOT_PATH . '/templates/front/_head.php';
         <?php if ($p['cat_name']): ?><span class="prod-cat"><?= e($p['cat_name']) ?></span><?php endif ?>
         <h3><a href="/product/<?= e($p['slug']) ?>"><?= e($p['name']) ?></a></h3>
         <?php if ($p['short_description']): ?><p><?= e(mb_substr($p['short_description'],0,80)) ?>...</p><?php endif ?>
+        <?php if ($p['rating']): ?><?= star_rating($p['rating'], $p['review_count']) ?><?php endif ?>
         <div class="price-row">
           <?php if ($p['price']): ?>
           <?php if ($p['sale_price']): ?>
@@ -127,7 +128,7 @@ require ROOT_PATH . '/templates/front/_head.php';
           <?php endif ?>
           <?php endif ?>
           <?php if ($p['affiliate_url']): ?>
-          <a href="<?= e($p['affiliate_url']) ?>" target="_blank" rel="noopener sponsored" class="btn-buy">Buy Now</a>
+          <a href="<?= e($p['affiliate_url']) ?>" target="_blank" rel="noopener sponsored" class="btn-buy"><i class="fab fa-amazon"></i> View on Amazon</a>
           <?php else: ?>
           <a href="/product/<?= e($p['slug']) ?>" class="btn-buy">Details</a>
           <?php endif ?>

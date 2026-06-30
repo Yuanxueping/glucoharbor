@@ -72,6 +72,8 @@ CREATE TABLE IF NOT EXISTS `products` (
   `gallery` text DEFAULT NULL,
   `category_id` int DEFAULT NULL,
   `affiliate_url` varchar(500) DEFAULT NULL,
+  `rating` decimal(2,1) DEFAULT NULL,
+  `review_count` int DEFAULT NULL,
   `badge` varchar(50) DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT 1,
   `is_featured` tinyint(1) DEFAULT 0,

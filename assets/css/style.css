@@ -321,6 +321,12 @@ img{max-width:100%;height:auto}
   .gd-hero{padding:32px 0 24px !important}
 }
 
+/* ── Star Rating ── */
+.star-rating{display:inline-flex;align-items:center;gap:2px;font-size:13px;color:#f59e0b;margin-bottom:6px}
+.star-rating .far.fa-star{color:#d1d5db}
+.star-score{font-weight:700;color:#f59e0b;margin-left:2px}
+.star-count{color:#6b7280;font-size:12px;font-weight:400}
+
 /* ── You May Also Like ── */
 .you-may-like-section{padding:40px 0;background:var(--bg);border-top:1px solid var(--border)}
 .you-may-like-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}

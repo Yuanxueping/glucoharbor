@@ -110,7 +110,7 @@ if (!$related_products) {
           <?php endif ?>
         </div>
         <?php endif ?>
-        <?php if ($rp['affiliate_url']): ?><span class="ymal-btn">View Deal <i class="fas fa-arrow-right fa-xs"></i></span><?php endif ?>
+        <?php if ($rp['affiliate_url']): ?><span class="ymal-btn"><i class="fab fa-amazon"></i> View on Amazon</span><?php endif ?>
       </div>
     </a>
     <?php endforeach ?>

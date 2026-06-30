@@ -114,6 +114,23 @@ function footer_pages() {
     return $fps;
 }
 
+// ── 星级评分 HTML ──
+function star_rating($rating, $review_count = null) {
+    if (!$rating) return '';
+    $rating = (float)$rating;
+    $full   = (int)floor($rating);
+    $half   = ($rating - $full) >= 0.25 && ($rating - $full) < 0.75;
+    $empty  = 5 - $full - ($half ? 1 : 0);
+    $html   = '<span class="star-rating">';
+    for ($i = 0; $i < $full; $i++)  $html .= '<i class="fas fa-star"></i>';
+    if ($half)                        $html .= '<i class="fas fa-star-half-alt"></i>';
+    for ($i = 0; $i < $empty; $i++) $html .= '<i class="far fa-star"></i>';
+    $html .= ' <span class="star-score">' . number_format($rating, 1) . '</span>';
+    if ($review_count) $html .= ' <span class="star-count">(' . number_format($review_count) . ')</span>';
+    $html .= '</span>';
+    return $html;
+}
+
 // ── 广告位辅助 ──
 function ad_slot($key) {
     $code = setting($key);

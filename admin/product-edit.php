@@ -17,6 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price       = trim($_POST['price'] ?? '') !== '' ? (float)$_POST['price'] : null;
     $sale_price  = trim($_POST['sale_price'] ?? '') !== '' ? (float)$_POST['sale_price'] : null;
     $affiliate_url = trim($_POST['affiliate_url'] ?? '');
+    $rating      = trim($_POST['rating'] ?? '') !== '' ? min(5, max(0, (float)$_POST['rating'])) : null;
+    $review_count = trim($_POST['review_count'] ?? '') !== '' ? (int)$_POST['review_count'] : null;
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
     $is_active   = isset($_POST['is_active']) ? 1 : 0;
     $meta_title  = trim($_POST['meta_title'] ?? '');
@@ -61,12 +63,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $gallery_json = json_encode(array_values($gallery));
 
     if ($p) {
-        db_query("UPDATE products SET name=?,slug=?,description=?,short_description=?,category_id=?,image=?,gallery=?,price=?,sale_price=?,affiliate_url=?,is_featured=?,is_active=?,meta_title=?,meta_description=? WHERE id=?",
-            [$name,$slug,$description,$short_desc,$category_id,$image,$gallery_json,$price,$sale_price,$affiliate_url,$is_featured,$is_active,$meta_title,$meta_desc,$id]);
+        db_query("UPDATE products SET name=?,slug=?,description=?,short_description=?,category_id=?,image=?,gallery=?,price=?,sale_price=?,affiliate_url=?,rating=?,review_count=?,is_featured=?,is_active=?,meta_title=?,meta_description=? WHERE id=?",
+            [$name,$slug,$description,$short_desc,$category_id,$image,$gallery_json,$price,$sale_price,$affiliate_url,$rating,$review_count,$is_featured,$is_active,$meta_title,$meta_desc,$id]);
         flash('success','Product updated.');
     } else {
-        $new_id = db_insert("INSERT INTO products(name,slug,description,short_description,category_id,image,gallery,price,sale_price,affiliate_url,is_featured,is_active,meta_title,meta_description) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-            [$name,$slug,$description,$short_desc,$category_id,$image,$gallery_json,$price,$sale_price,$affiliate_url,$is_featured,$is_active,$meta_title,$meta_desc]);
+        $new_id = db_insert("INSERT INTO products(name,slug,description,short_description,category_id,image,gallery,price,sale_price,affiliate_url,rating,review_count,is_featured,is_active,meta_title,meta_description) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            [$name,$slug,$description,$short_desc,$category_id,$image,$gallery_json,$price,$sale_price,$affiliate_url,$rating,$review_count,$is_featured,$is_active,$meta_title,$meta_desc]);
         flash('success','Product created.');
         redirect('/admin/product-edit.php?id='.$new_id);
     }
@@ -159,7 +161,21 @@ require __DIR__ . '/_layout.php';
     <div class="card-box mb-3">
       <div class="card-box-title">Affiliate Link</div>
       <input type="url" name="affiliate_url" class="form-control" placeholder="https://..." value="<?= e($p['affiliate_url'] ?? '') ?>">
-      <small class="text-muted">Visitors will be sent to this URL when clicking "Buy Now"</small>
+      <small class="text-muted">Visitors will be sent to this URL when clicking "View on Amazon"</small>
+    </div>
+
+    <div class="card-box mb-3">
+      <div class="card-box-title"><i class="fas fa-star text-warning"></i> Rating</div>
+      <div class="mb-2">
+        <label class="form-label small">Star Rating (0 – 5)</label>
+        <input type="number" name="rating" class="form-control" step="0.1" min="0" max="5" placeholder="e.g. 4.5"
+          value="<?= $p['rating'] ?? '' ?>">
+      </div>
+      <div>
+        <label class="form-label small">Review Count</label>
+        <input type="number" name="review_count" class="form-control" min="0" placeholder="e.g. 1283"
+          value="<?= $p['review_count'] ?? '' ?>">
+      </div>
     </div>
 
     <div class="card-box mb-3">
