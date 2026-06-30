@@ -191,42 +191,58 @@ var quill = new Quill('#editor', {
   }
 });
 
-var sourceMode = false;
 var sourceEditor = document.getElementById('source-editor');
-var toggleBtn   = document.getElementById('toggle-source');
+var editorEl     = document.getElementById('editor');
+var toggleBtn    = document.getElementById('toggle-source');
+var contentInput = document.getElementById('content-input');
 
-// Load content — use dangerouslyPasteHTML for better HTML preservation
-if (window.__articleContent) {
-  quill.clipboard.dangerouslyPasteHTML(window.__articleContent);
-  sourceEditor.value = window.__articleContent;
+// Detect complex HTML (AI-generated content with style tags, gd-* classes, etc.)
+function isComplexHTML(html) {
+  return /<style[\s>]/i.test(html) ||
+         /class="gd-/i.test(html) ||
+         /<(section|figure|table|iframe|video|script)/i.test(html) ||
+         html.length > 5000;
+}
+
+var sourceMode = false;
+
+function enterSourceMode() {
+  sourceMode = true;
+  editorEl.style.display = 'none';
+  sourceEditor.style.display = 'block';
+  toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Visual';
+  toggleBtn.classList.replace('btn-outline-secondary', 'btn-outline-primary');
+}
+
+function enterVisualMode() {
+  sourceMode = false;
+  // Sync source → Quill
+  quill.clipboard.dangerouslyPasteHTML(sourceEditor.value);
+  editorEl.style.display = 'block';
+  sourceEditor.style.display = 'none';
+  toggleBtn.innerHTML = '<i class="fas fa-code"></i> Source HTML';
+  toggleBtn.classList.replace('btn-outline-primary', 'btn-outline-secondary');
+}
+
+// Init: load content, auto-switch to source mode for complex HTML
+sourceEditor.value = window.__articleContent || '';
+if (isComplexHTML(window.__articleContent || '')) {
+  enterSourceMode();
+} else {
+  quill.clipboard.dangerouslyPasteHTML(window.__articleContent || '');
 }
 
 toggleBtn.addEventListener('click', function() {
-  sourceMode = !sourceMode;
   if (sourceMode) {
-    // Switch to source: copy Quill HTML → textarea
-    sourceEditor.value = quill.root.innerHTML;
-    document.getElementById('editor').style.display = 'none';
-    sourceEditor.style.display = 'block';
-    toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Visual';
-    toggleBtn.classList.replace('btn-outline-secondary','btn-outline-primary');
+    enterVisualMode();
   } else {
-    // Switch to visual: paste source HTML back into Quill
-    quill.clipboard.dangerouslyPasteHTML(sourceEditor.value);
-    document.getElementById('editor').style.display = 'block';
-    sourceEditor.style.display = 'none';
-    toggleBtn.innerHTML = '<i class="fas fa-code"></i> Source HTML';
-    toggleBtn.classList.replace('btn-outline-primary','btn-outline-secondary');
+    sourceEditor.value = quill.root.innerHTML;
+    enterSourceMode();
   }
 });
 
 document.querySelector('form').addEventListener('submit', function() {
-  // Always save from whichever mode is active
-  if (sourceMode) {
-    document.getElementById('content-input').value = sourceEditor.value;
-  } else {
-    document.getElementById('content-input').value = quill.root.innerHTML;
-  }
+  contentInput.value = sourceMode ? sourceEditor.value : quill.root.innerHTML;
 });
 </script>
 <?php require __DIR__ . '/_layout_end.php'; ?>
