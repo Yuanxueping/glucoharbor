@@ -322,8 +322,9 @@ img{max-width:100%;height:auto}
 }
 
 /* ── Star Rating ── */
-.star-rating{display:inline-flex;align-items:center;gap:2px;font-size:13px;color:#f59e0b;margin-bottom:6px}
-.star-rating .far.fa-star{color:#d1d5db}
+.star-rating{display:inline-flex;align-items:center;gap:2px;font-size:13px;margin-bottom:6px}
+.star-rating i{color:#f59e0b !important}
+.star-rating .far.fa-star{color:#d1d5db !important}
 .star-score{font-weight:700;color:#f59e0b;margin-left:2px}
 .star-count{color:#6b7280;font-size:12px;font-weight:400}
 
