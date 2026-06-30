@@ -43,6 +43,7 @@ img{max-width:100%;height:auto}
 .hero-side-card{display:flex;gap:12px;background:var(--white);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);color:var(--text);transition:box-shadow .2s;flex:1;min-height:0}
 .hero-side-card:hover{box-shadow:var(--shadow-md);color:var(--text)}
 .side-body{padding:12px;flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.side-body .badge{align-self:flex-start;margin-bottom:6px}
 .side-body h3{font-size:14px;font-weight:600;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .side-img{width:110px;flex-shrink:0;background-size:cover;background-position:center;min-height:90px;align-self:stretch}
 .side-placeholder{background:linear-gradient(135deg,#e0e8ff,#c8f5e8)}
