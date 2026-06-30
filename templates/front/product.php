@@ -21,11 +21,13 @@ require ROOT_PATH.'/templates/front/_head.php';
         foreach ($gallery as $gi) { if ($gi && $gi !== $p['image']) $all_images[] = $gi; }
       ?>
       <?php if ($all_images): ?>
-      <img id="prod-main-img" src="<?= e($all_images[0]) ?>" alt="<?= e($p['name']) ?>" style="width:100%;border-radius:8px;object-fit:cover;max-height:400px">
+      <div class="prod-main-wrap">
+        <img id="prod-main-img" src="<?= e($all_images[0]) ?>" alt="<?= e($p['name']) ?>">
+      </div>
       <?php if (count($all_images) > 1): ?>
       <div class="prod-gallery-thumbs">
         <?php foreach ($all_images as $gi): ?>
-        <img src="<?= e($gi) ?>" alt="" onclick="document.getElementById('prod-main-img').src=this.src" class="gallery-thumb <?= $gi===$all_images[0]?'active':'' ?>">
+        <img src="<?= e($gi) ?>" alt="" onclick="switchThumb(this)" class="gallery-thumb <?= $gi===$all_images[0]?'active':'' ?>">
         <?php endforeach ?>
       </div>
       <?php endif ?>
@@ -64,16 +66,17 @@ require ROOT_PATH.'/templates/front/_head.php';
 </div>
 </section>
 <style>
-.prod-gallery-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.gallery-thumb{width:70px;height:52px;object-fit:cover;border-radius:4px;cursor:pointer;border:2px solid transparent;opacity:.75;transition:.2s}
+.prod-main-wrap{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px;text-align:center}
+.prod-main-wrap img{max-width:100%;max-height:380px;object-fit:contain;border-radius:6px}
+.prod-gallery-thumbs{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:10px}
+.gallery-thumb{width:70px;height:60px;object-fit:contain;background:#fff;border:2px solid #e5e7eb;border-radius:6px;cursor:pointer;padding:4px;opacity:.75;transition:.2s}
 .gallery-thumb:hover,.gallery-thumb.active{border-color:#2563eb;opacity:1}
 </style>
 <script>
-document.querySelectorAll('.gallery-thumb').forEach(function(t){
-  t.addEventListener('click',function(){
-    document.querySelectorAll('.gallery-thumb').forEach(function(x){x.classList.remove('active')});
-    t.classList.add('active');
-  });
-});
+function switchThumb(t){
+  document.getElementById('prod-main-img').src = t.src;
+  document.querySelectorAll('.gallery-thumb').forEach(function(x){x.classList.remove('active')});
+  t.classList.add('active');
+}
 </script>
 <?php require ROOT_PATH.'/templates/front/_foot.php'; ?>
