@@ -42,10 +42,10 @@ img{max-width:100%;height:auto}
 .hero-side{display:flex;flex-direction:column;gap:12px;height:100%}
 .hero-side-card{display:flex;gap:12px;background:var(--white);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);color:var(--text);transition:box-shadow .2s;flex:1;min-height:0}
 .hero-side-card:hover{box-shadow:var(--shadow-md);color:var(--text)}
-.side-img{width:110px;flex-shrink:0;background-size:cover;background-position:center;min-height:90px}
+.side-body{padding:12px;flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.side-body h3{font-size:14px;font-weight:600;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.side-img{width:110px;flex-shrink:0;background-size:cover;background-position:center;min-height:90px;align-self:stretch}
 .side-placeholder{background:linear-gradient(135deg,#e0e8ff,#c8f5e8)}
-.side-body{padding:12px;flex:1}
-.side-body h3{font-size:15px;font-weight:600;line-height:1.4}
 
 /* Badge */
 .badge{display:inline-block;background:var(--blue);color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
