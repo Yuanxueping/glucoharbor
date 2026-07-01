@@ -147,8 +147,8 @@ if (!$related_products) {
   "headline":<?= json_encode($article['title']) ?>,
   "description":<?= json_encode($article['excerpt'] ?? '') ?>,
   "url":<?= json_encode($site_url . '/article/' . $article['slug']) ?>,
-  "datePublished":<?= json_encode($article['published_at']) ?>,
-  "dateModified":<?= json_encode($article['updated_at']) ?>,
+  "datePublished":<?= json_encode(str_replace(' ','T',$article['published_at']).'+00:00') ?>,
+  "dateModified":<?= json_encode(str_replace(' ','T',$article['updated_at']).'+00:00') ?>,
   "inLanguage":"en-US",
   "author":{"@type":"Organization","name":<?= json_encode($site_name) ?>,"url":<?= json_encode($site_url) ?>},
   "publisher":{"@type":"Organization","name":<?= json_encode($site_name) ?>,"url":<?= json_encode($site_url) ?>,"logo":{"@type":"ImageObject","url":<?= json_encode($site_url . '/assets/img/logo.png') ?>}}
