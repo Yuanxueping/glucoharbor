@@ -42,10 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($a) {
         db_query("UPDATE articles SET title=?,slug=?,content=?,excerpt=?,category_id=?,featured_image=?,status=?,is_featured=?,source=?,meta_title=?,meta_description=?,meta_keywords=?,published_at=? WHERE id=?",
             [$title,$slug,$content,$excerpt,$category_id,$featured_image,$status,$is_featured,$source,$meta_title,$meta_desc,$meta_kw,$pub_at,$id]);
+        if ($status === 'published') indexnow_ping(setting('site_url') . '/article/' . $slug);
         flash('success','Article updated.');
     } else {
         $new_id = db_insert("INSERT INTO articles(title,slug,content,excerpt,category_id,featured_image,status,is_featured,source,meta_title,meta_description,meta_keywords,published_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
             [$title,$slug,$content,$excerpt,$category_id,$featured_image,$status,$is_featured,$source,$meta_title,$meta_desc,$meta_kw,$pub_at]);
+        if ($status === 'published') indexnow_ping(setting('site_url') . '/article/' . $slug);
         flash('success','Article created.');
         redirect('/admin/article-edit.php?id='.$new_id);
     }

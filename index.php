@@ -22,6 +22,14 @@ if ($url === 'sitemap.xml') {
     exit;
 }
 
+// IndexNow key file
+$indexnow_key = setting('indexnow_key');
+if ($indexnow_key && $url === $indexnow_key . '.txt') {
+    header('Content-Type: text/plain');
+    echo $indexnow_key;
+    exit;
+}
+
 // Robots
 if ($url === 'robots.txt') {
     header('Content-Type: text/plain');

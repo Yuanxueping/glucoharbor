@@ -36,6 +36,11 @@ $cur_path   = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 <?php if (setting('adsense_enabled')==='1' && setting('adsense_publisher_id')): ?>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=<?= e(setting('adsense_publisher_id')) ?>" crossorigin="anonymous"></script>
 <?php endif ?>
+<?php if ($cur_path === '/'): ?>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"<?= addslashes(e($site_name)) ?>","url":"<?= e($site_url) ?>","description":"<?= addslashes(e(setting('site_description'))) ?>","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"<?= e($site_url) ?>/search?q={search_term_string}"},"query-input":"required name=search_term_string"}}
+</script>
+<?php endif ?>
 </head>
 <body>
 <header class="site-header">

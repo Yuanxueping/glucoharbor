@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $pub,
             ]
         );
+        if ($status === 'published') indexnow_ping(setting('site_url') . '/article/' . $slug);
         echo json_encode(['success'=>true,'id'=>(int)$id,'slug'=>$slug]);
         exit;
     }

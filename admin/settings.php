@@ -18,6 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         save_setting('ad_article_top_code', $_POST['ad_article_top_code'] ?? '');
         save_setting('ad_article_bottom_code', $_POST['ad_article_bottom_code'] ?? '');
         save_setting('ad_sidebar_code', $_POST['ad_sidebar_code'] ?? '');
+    } elseif ($tab === 'seo') {
+        if (isset($_POST['generate_indexnow'])) {
+            save_setting('indexnow_key', bin2hex(random_bytes(16)));
+        }
     } elseif ($tab === 'api') {
         if (isset($_POST['generate_token'])) {
             save_setting('api_token', bin2hex(random_bytes(24)));
@@ -55,7 +59,7 @@ require __DIR__ . '/_layout.php';
 <h1 class="page-title mb-3">Settings</h1>
 
 <ul class="nav nav-tabs mb-3">
-  <?php foreach (['general'=>'General','ads'=>'Advertising','api'=>'API / Import','social'=>'Social','password'=>'Password'] as $t=>$l): ?>
+  <?php foreach (['general'=>'General','seo'=>'SEO','ads'=>'Advertising','api'=>'API / Import','social'=>'Social','password'=>'Password'] as $t=>$l): ?>
   <li class="nav-item">
     <a class="nav-link <?= $tab===$t?'active':'' ?>" href="/admin/settings.php?tab=<?= $t ?>"><?= $l ?></a>
   </li>
@@ -105,6 +109,42 @@ require __DIR__ . '/_layout.php';
     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Settings</button>
   </div>
 </form>
+</div>
+
+<!-- SEO -->
+<?php elseif ($tab==='seo'): ?>
+<div class="card-box mb-3">
+  <div class="card-box-title"><i class="fas fa-bolt"></i> IndexNow (Bing / Yandex instant indexing)</div>
+  <p class="text-muted small mb-3">IndexNow lets you notify Bing instantly when a page is published or updated. Generate a key, then Bing will verify it at <code><?= e(setting('site_url')) ?>/<strong>{key}</strong>.txt</code>. Once set, every published article auto-pings Bing.</p>
+
+  <?php $ikey = setting('indexnow_key'); ?>
+  <?php if ($ikey): ?>
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Your IndexNow Key</label>
+    <div class="input-group">
+      <input type="text" class="form-control font-monospace" value="<?= e($ikey) ?>" id="ikey_field" readonly>
+      <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(document.getElementById('ikey_field').value).then(()=>alert('Copied!'))">
+        <i class="fas fa-copy"></i> Copy
+      </button>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Key File URL (auto-served, no upload needed)</label>
+    <input type="text" class="form-control font-monospace" value="<?= e(setting('site_url')) ?>/<?= e($ikey) ?>.txt" readonly>
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Submit to Bing Webmaster Tools</label>
+    <p class="text-muted small">Go to <a href="https://www.bing.com/webmasters" target="_blank">Bing Webmaster Tools</a> → Settings → IndexNow → paste your key above.</p>
+  </div>
+  <?php endif ?>
+
+  <form method="POST">
+    <input type="hidden" name="tab" value="seo">
+    <button type="submit" name="generate_indexnow" class="btn <?= $ikey?'btn-outline-warning':'btn-primary' ?>">
+      <i class="fas fa-key"></i> <?= $ikey ? 'Regenerate Key' : 'Generate IndexNow Key' ?>
+    </button>
+    <?php if ($ikey): ?><small class="text-muted ms-2">Regenerating will change the key file URL.</small><?php endif ?>
+  </form>
 </div>
 
 <!-- Advertising -->

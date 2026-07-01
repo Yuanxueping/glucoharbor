@@ -79,4 +79,21 @@ function switchThumb(t){
   t.classList.add('active');
 }
 </script>
+<?php
+$site_url  = rtrim(setting('site_url'), '/');
+$prod_url  = $site_url . '/product/' . $p['slug'];
+$cur_price = $p['sale_price'] ?: $p['price'];
+?>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Product",
+  "name":<?= json_encode($p['name']) ?>,
+  "description":<?= json_encode(strip_tags($p['short_description'] ?? '')) ?>,
+  "url":<?= json_encode($prod_url) ?>
+  <?php if ($p['image']): ?>,"image":<?= json_encode($p['image']) ?><?php endif ?>
+  <?php if ($p['rating']): ?>,"aggregateRating":{"@type":"AggregateRating","ratingValue":<?= (float)$p['rating'] ?>,"bestRating":5,"worstRating":1<?php if ($p['review_count']): ?>,"reviewCount":<?= (int)$p['review_count'] ?><?php endif ?>}<?php endif ?>
+  <?php if ($cur_price): ?>,"offers":{"@type":"Offer","url":<?= json_encode($p['affiliate_url'] ?: $prod_url) ?>,"priceCurrency":<?= json_encode($p['currency'] ?: 'USD') ?>,"price":<?= number_format((float)$cur_price, 2, '.', '') ?>,"availability":"https://schema.org/InStock","itemCondition":"https://schema.org/NewCondition"}<?php endif ?>
+}
+</script>
 <?php require ROOT_PATH.'/templates/front/_foot.php'; ?>

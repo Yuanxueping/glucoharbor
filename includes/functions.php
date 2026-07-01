@@ -114,6 +114,29 @@ function footer_pages() {
     return $fps;
 }
 
+// ── IndexNow ──
+function indexnow_ping($urls) {
+    $key = setting('indexnow_key');
+    $host = parse_url(setting('site_url'), PHP_URL_HOST);
+    if (!$key || !$host) return false;
+    if (is_string($urls)) $urls = [$urls];
+    $payload = json_encode([
+        'host'    => $host,
+        'key'     => $key,
+        'keyLocation' => setting('site_url') . '/' . $key . '.txt',
+        'urlList' => array_values($urls),
+    ]);
+    $ctx = stream_context_create(['http' => [
+        'method'  => 'POST',
+        'header'  => "Content-Type: application/json\r\nContent-Length: " . strlen($payload),
+        'content' => $payload,
+        'timeout' => 5,
+        'ignore_errors' => true,
+    ]]);
+    @file_get_contents('https://api.indexnow.org/IndexNow', false, $ctx);
+    return true;
+}
+
 // ── 星级评分 HTML ──
 function star_rating($rating, $review_count = null) {
     if (!$rating) return '';

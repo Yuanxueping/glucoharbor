@@ -141,14 +141,20 @@ if (!$related_products) {
 <?php endif ?>
 
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Article",
-"headline":"<?= addslashes(e($article['title'])) ?>",
-"description":"<?= addslashes(e($article['excerpt']??'')) ?>",
-"url":"<?= $site_url ?>/article/<?= $article['slug'] ?>",
-"datePublished":"<?= $article['published_at'] ?>","dateModified":"<?= $article['updated_at'] ?>",
-"author":{"@type":"Organization","name":"<?= e($site_name) ?>"},
-"publisher":{"@type":"Organization","name":"<?= e($site_name) ?>","url":"<?= $site_url ?>"}
-<?php if ($article['featured_image']): ?>,"image":"<?= $site_url . $article['featured_image'] ?>"<?php endif ?>}
+{
+  "@context":"https://schema.org",
+  "@type":"MedicalWebPage",
+  "headline":<?= json_encode($article['title']) ?>,
+  "description":<?= json_encode($article['excerpt'] ?? '') ?>,
+  "url":<?= json_encode($site_url . '/article/' . $article['slug']) ?>,
+  "datePublished":<?= json_encode($article['published_at']) ?>,
+  "dateModified":<?= json_encode($article['updated_at']) ?>,
+  "inLanguage":"en-US",
+  "author":{"@type":"Organization","name":<?= json_encode($site_name) ?>,"url":<?= json_encode($site_url) ?>},
+  "publisher":{"@type":"Organization","name":<?= json_encode($site_name) ?>,"url":<?= json_encode($site_url) ?>,"logo":{"@type":"ImageObject","url":<?= json_encode($site_url . '/assets/img/logo.png') ?>}}
+  <?php if ($article['featured_image']): ?>,"image":{"@type":"ImageObject","url":<?= json_encode($article['featured_image']) ?>}<?php endif ?>
+  <?php if ($article['cat_name']): ?>,"about":{"@type":"MedicalCondition","name":<?= json_encode($article['cat_name']) ?>}<?php endif ?>
+}
 </script>
 
 <?php require ROOT_PATH . '/templates/front/_foot.php'; ?>
