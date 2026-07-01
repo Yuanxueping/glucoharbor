@@ -19,9 +19,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         save_setting('ad_article_bottom_code', $_POST['ad_article_bottom_code'] ?? '');
         save_setting('ad_sidebar_code', $_POST['ad_sidebar_code'] ?? '');
     } elseif ($tab === 'seo') {
-        if (isset($_POST['generate_indexnow'])) {
+        if (isset($_POST['indexnow_key_manual']) && trim($_POST['indexnow_key_manual']) !== '') {
+            save_setting('indexnow_key', trim($_POST['indexnow_key_manual']));
+            flash('success', 'IndexNow key saved.');
+        } elseif (isset($_POST['generate_indexnow'])) {
             save_setting('indexnow_key', bin2hex(random_bytes(16)));
         }
+        redirect('/admin/settings.php?tab=seo');
     } elseif ($tab === 'api') {
         if (isset($_POST['generate_token'])) {
             save_setting('api_token', bin2hex(random_bytes(24)));
@@ -140,10 +144,16 @@ require __DIR__ . '/_layout.php';
 
   <form method="POST">
     <input type="hidden" name="tab" value="seo">
-    <button type="submit" name="generate_indexnow" class="btn <?= $ikey?'btn-outline-warning':'btn-primary' ?>">
-      <i class="fas fa-key"></i> <?= $ikey ? 'Regenerate Key' : 'Generate IndexNow Key' ?>
-    </button>
-    <?php if ($ikey): ?><small class="text-muted ms-2">Regenerating will change the key file URL.</small><?php endif ?>
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Paste key from Bing IndexNow page</label>
+      <div class="input-group">
+        <input type="text" name="indexnow_key_manual" class="form-control font-monospace"
+          placeholder="e.g. 13328e6d5a4641d49f98c5be6bc40ed5"
+          value="<?= e($ikey) ?>">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Key</button>
+      </div>
+      <small class="text-muted">Copy the key from <a href="https://www.bing.com/indexnow" target="_blank">Bing IndexNow page</a> and paste here.</small>
+    </div>
   </form>
 </div>
 
