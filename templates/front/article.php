@@ -143,7 +143,7 @@ if (!$related_products) {
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
-  "@type":"MedicalWebPage",
+  "@type":"Article",
   "headline":<?= json_encode($article['title']) ?>,
   "description":<?= json_encode($article['excerpt'] ?? '') ?>,
   "url":<?= json_encode($site_url . '/article/' . $article['slug']) ?>,
@@ -152,8 +152,8 @@ if (!$related_products) {
   "inLanguage":"en-US",
   "author":{"@type":"Organization","name":<?= json_encode($site_name) ?>,"url":<?= json_encode($site_url) ?>},
   "publisher":{"@type":"Organization","name":<?= json_encode($site_name) ?>,"url":<?= json_encode($site_url) ?>,"logo":{"@type":"ImageObject","url":<?= json_encode($site_url . '/assets/img/logo.png') ?>}}
-  <?php if ($article['featured_image']): ?>,"image":{"@type":"ImageObject","url":<?= json_encode($article['featured_image']) ?>}<?php endif ?>
-  <?php if ($article['cat_name']): ?>,"about":{"@type":"MedicalCondition","name":<?= json_encode($article['cat_name']) ?>}<?php endif ?>
+  <?php if ($article['featured_image']): ?>,"image":{"@type":"ImageObject","url":<?= json_encode($article['featured_image']) ?>,"width":1200,"height":630}<?php endif ?>
+  <?php if ($article['cat_name']): ?>,"articleSection":<?= json_encode($article['cat_name']) ?><?php endif ?>
 }
 </script>
 
