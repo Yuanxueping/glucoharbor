@@ -8,6 +8,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($tab === 'general') {
         $fields = ['site_name','site_url','site_description','site_keywords','icp_number','ga_tracking_id','articles_per_page','medical_disclaimer'];
         foreach ($fields as $f) { save_setting($f, trim($_POST[$f] ?? '')); }
+        // Logo upload
+        if (!empty($_FILES['site_logo']['tmp_name'])) {
+            $r = upload_image('site_logo');
+            if (!$r['error']) save_setting('site_logo', $r['url']);
+            else flash('error', 'Logo upload failed: ' . $r['error']);
+        }
+        // Remove logo
+        if (!empty($_POST['remove_logo'])) save_setting('site_logo', '');
+        // Favicon upload
+        if (!empty($_FILES['site_favicon']['tmp_name'])) {
+            $f2 = $_FILES['site_favicon'];
+            $allowed_fav = ['image/x-icon','image/vnd.microsoft.icon','image/png','image/gif','image/jpeg','image/webp'];
+            if (!in_array($f2['type'], $allowed_fav)) {
+                flash('error', 'Favicon must be ICO, PNG, or WebP.');
+            } elseif ($f2['size'] > 1 * 1024 * 1024) {
+                flash('error', 'Favicon too large (max 1MB).');
+            } else {
+                if (!is_dir(UPLOADS_PATH)) mkdir(UPLOADS_PATH, 0755, true);
+                $ext_fav = strtolower(pathinfo($f2['name'], PATHINFO_EXTENSION));
+                $fav_name = 'favicon_' . time() . '.' . $ext_fav;
+                if (move_uploaded_file($f2['tmp_name'], UPLOADS_PATH . '/' . $fav_name)) {
+                    save_setting('site_favicon', UPLOADS_URL . '/' . $fav_name);
+                }
+            }
+        }
+        // Remove favicon
+        if (!empty($_POST['remove_favicon'])) save_setting('site_favicon', '');
     } elseif ($tab === 'ads') {
         save_setting('adsense_publisher_id', trim($_POST['adsense_publisher_id'] ?? ''));
         save_setting('adsense_enabled', !empty($_POST['adsense_publisher_id']) ? '1' : '0');
@@ -73,7 +100,7 @@ require __DIR__ . '/_layout.php';
 <!-- General -->
 <?php if ($tab==='general'): ?>
 <div class="card-box">
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
   <input type="hidden" name="tab" value="general">
   <div class="row g-3">
     <div class="col-md-6">
@@ -108,6 +135,37 @@ require __DIR__ . '/_layout.php';
       <label class="form-label">Medical Disclaimer Text <small class="text-muted">(shown in footer)</small></label>
       <textarea name="medical_disclaimer" class="form-control" rows="3"><?= e(setting('medical_disclaimer')) ?></textarea>
     </div>
+
+    <!-- Logo -->
+    <div class="col-md-6">
+      <label class="form-label fw-semibold">Site Logo</label>
+      <?php $logo = setting('site_logo'); if ($logo): ?>
+      <div class="mb-2 d-flex align-items-center gap-3">
+        <img src="<?= e($logo) ?>" alt="Logo" style="max-height:50px;max-width:180px;object-fit:contain;background:#f1f5f9;border-radius:6px;padding:4px">
+        <label class="text-danger small" style="cursor:pointer">
+          <input type="checkbox" name="remove_logo" value="1"> Remove logo
+        </label>
+      </div>
+      <?php endif ?>
+      <input type="file" name="site_logo" class="form-control" accept="image/*">
+      <small class="text-muted">PNG/WebP recommended, transparent background. Leave blank to keep current.</small>
+    </div>
+
+    <!-- Favicon -->
+    <div class="col-md-6">
+      <label class="form-label fw-semibold">Site Favicon <small class="text-muted">(browser tab icon)</small></label>
+      <?php $fav = setting('site_favicon'); if ($fav): ?>
+      <div class="mb-2 d-flex align-items-center gap-3">
+        <img src="<?= e($fav) ?>" alt="Favicon" style="width:32px;height:32px;object-fit:contain;background:#f1f5f9;border-radius:4px;padding:2px">
+        <label class="text-danger small" style="cursor:pointer">
+          <input type="checkbox" name="remove_favicon" value="1"> Remove favicon
+        </label>
+      </div>
+      <?php endif ?>
+      <input type="file" name="site_favicon" class="form-control" accept=".ico,.png,.webp,image/x-icon,image/png,image/webp">
+      <small class="text-muted">ICO or PNG, recommended 32×32 or 64×64. Leave blank to keep current.</small>
+    </div>
+
   </div>
   <div class="mt-3">
     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Settings</button>
