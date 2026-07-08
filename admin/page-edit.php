@@ -50,9 +50,13 @@ require __DIR__ . '/_layout.php';
         <input type="text" name="title" class="form-control form-control-lg" value="<?= e($pg['title'] ?? '') ?>" required>
       </div>
       <div>
-        <label class="form-label fw-semibold">Content</label>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label class="form-label fw-semibold mb-0">Content</label>
+          <button type="button" id="toggle-source" class="btn btn-sm btn-outline-secondary">Source Code</button>
+        </div>
         <div id="editor" style="height:420px;border:1px solid #dee2e6;border-radius:6px"></div>
         <textarea name="content" id="content-input" hidden></textarea>
+        <textarea id="source-editor" class="form-control font-monospace" style="height:420px;display:none;font-size:13px;resize:vertical" spellcheck="false"></textarea>
         <script>window.__articleContent = <?= json_encode($pg['content'] ?? '') ?>;</script>
       </div>
     </div>
@@ -101,7 +105,27 @@ var quill = new Quill('#editor', {
 if (window.__articleContent) {
   quill.root.innerHTML = window.__articleContent;
 }
+var sourceMode = false;
+var srcEl = document.getElementById('source-editor');
+var editorEl = document.getElementById('editor');
+document.getElementById('toggle-source').addEventListener('click', function() {
+  sourceMode = !sourceMode;
+  if (sourceMode) {
+    srcEl.value = quill.root.innerHTML;
+    editorEl.style.display = 'none';
+    srcEl.style.display = 'block';
+    this.textContent = 'Visual Editor';
+    this.classList.replace('btn-outline-secondary','btn-outline-primary');
+  } else {
+    quill.root.innerHTML = srcEl.value;
+    srcEl.style.display = 'none';
+    editorEl.style.display = 'block';
+    this.textContent = 'Source Code';
+    this.classList.replace('btn-outline-primary','btn-outline-secondary');
+  }
+});
 document.querySelector('form').addEventListener('submit', function() {
+  if (sourceMode) { quill.root.innerHTML = srcEl.value; }
   document.getElementById('content-input').value = quill.root.innerHTML;
 });
 </script>
