@@ -150,7 +150,7 @@ if (!$related_products) {
   "datePublished":<?= json_encode(str_replace(' ','T',$article['published_at']).'+00:00') ?>,
   "dateModified":<?= json_encode(str_replace(' ','T',$article['updated_at']).'+00:00') ?>,
   "inLanguage":"en-US",
-  "author":{"@type":"Organization","name":<?= json_encode($site_name) ?>,"url":<?= json_encode($site_url) ?>},
+  "author":{"@type":"Organization","name":"GlucoHarbor Medical Team","url":<?= json_encode($site_url . '/page/our-editorial-team') ?>},
   "publisher":{"@type":"Organization","name":<?= json_encode($site_name) ?>,"url":<?= json_encode($site_url) ?>,"logo":{"@type":"ImageObject","url":<?= json_encode($site_url . '/assets/img/logo.png') ?>}}
   <?php if ($article['featured_image']): ?>,"image":{"@type":"ImageObject","url":<?= json_encode($article['featured_image']) ?>,"width":1200,"height":630}<?php endif ?>
   <?php if ($article['cat_name']): ?>,"articleSection":<?= json_encode($article['cat_name']) ?><?php endif ?>
