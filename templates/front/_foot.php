@@ -51,5 +51,6 @@
 </div>
 </footer>
 <script src="/assets/js/main.js"></script>
+<?php if (setting('code_body_close')): ?><?= setting('code_body_close') ?><?php endif ?>
 </body>
 </html>

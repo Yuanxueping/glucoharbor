@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($tab === 'general') {
         $fields = ['site_name','site_url','site_description','site_keywords','icp_number','ga_tracking_id','articles_per_page','medical_disclaimer'];
         foreach ($fields as $f) { save_setting($f, trim($_POST[$f] ?? '')); }
+        foreach (['code_head','code_body_open','code_body_close'] as $f) { save_setting($f, $_POST[$f] ?? ''); }
         // Logo upload
         if (!empty($_FILES['site_logo']['tmp_name'])) {
             $r = upload_image('site_logo');
@@ -134,6 +135,27 @@ require __DIR__ . '/_layout.php';
     <div class="col-12">
       <label class="form-label">Medical Disclaimer Text <small class="text-muted">(shown in footer)</small></label>
       <textarea name="medical_disclaimer" class="form-control" rows="3"><?= e(setting('medical_disclaimer')) ?></textarea>
+    </div>
+
+    <!-- Code Injection -->
+    <div class="col-12 mt-2">
+      <div class="card-box-title"><i class="fas fa-code"></i> Code Injection</div>
+      <p class="text-muted small mb-3">Insert scripts or tags into specific sections of every page (Analytics, Tag Manager, heatmaps, etc.).</p>
+    </div>
+    <div class="col-12">
+      <label class="form-label fw-semibold"><code>&lt;head&gt;</code> — End of &lt;head&gt;</label>
+      <textarea name="code_head" class="form-control font-monospace" rows="4" placeholder="<!-- Paste code to inject before </head> -->"><?= e(setting('code_head')) ?></textarea>
+      <div class="form-text">Injected just before <code>&lt;/head&gt;</code>. Good for meta tags, GTM snippet (head part), analytics scripts.</div>
+    </div>
+    <div class="col-12">
+      <label class="form-label fw-semibold"><code>&lt;body&gt;</code> — After &lt;body&gt; opening tag</label>
+      <textarea name="code_body_open" class="form-control font-monospace" rows="4" placeholder="<!-- Paste code to inject after <body> -->"><?= e(setting('code_body_open')) ?></textarea>
+      <div class="form-text">Injected immediately after <code>&lt;body&gt;</code>. Good for GTM noscript fallback.</div>
+    </div>
+    <div class="col-12">
+      <label class="form-label fw-semibold"><code>&lt;/body&gt;</code> — Before &lt;/body&gt; closing tag</label>
+      <textarea name="code_body_close" class="form-control font-monospace" rows="4" placeholder="<!-- Paste code to inject before </body> -->"><?= e(setting('code_body_close')) ?></textarea>
+      <div class="form-text">Injected just before <code>&lt;/body&gt;</code>. Good for chat widgets, tracking pixels, deferred scripts.</div>
     </div>
 
     <!-- Logo -->

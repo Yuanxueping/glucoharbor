@@ -41,8 +41,10 @@ $cur_path   = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 {"@context":"https://schema.org","@type":"WebSite","name":"<?= addslashes(e($site_name)) ?>","url":"<?= e($site_url) ?>","description":"<?= addslashes(e(setting('site_description'))) ?>","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"<?= e($site_url) ?>/search?q={search_term_string}"},"query-input":"required name=search_term_string"}}
 </script>
 <?php endif ?>
+<?php if (setting('code_head')): ?><?= setting('code_head') ?><?php endif ?>
 </head>
 <body>
+<?php if (setting('code_body_open')): ?><?= setting('code_body_open') ?><?php endif ?>
 <header class="site-header">
 <div class="container">
 <div class="header-inner">
