@@ -148,9 +148,9 @@ require __DIR__ . '/_layout.php';
       <div class="form-text">Injected just before <code>&lt;/head&gt;</code>. Good for meta tags, GTM snippet (head part), analytics scripts.</div>
     </div>
     <div class="col-12">
-      <label class="form-label fw-semibold"><code>&lt;body&gt;</code> — After &lt;body&gt; opening tag</label>
-      <textarea name="code_body_open" class="form-control font-monospace" rows="4" placeholder="<!-- Paste code to inject after <body> -->"><?= e(setting('code_body_open')) ?></textarea>
-      <div class="form-text">Injected immediately after <code>&lt;body&gt;</code>. Good for GTM noscript fallback.</div>
+      <label class="form-label fw-semibold"><code>&lt;/main&gt;</code> — After main content, before footer</label>
+      <textarea name="code_body_open" class="form-control font-monospace" rows="4" placeholder="<!-- Paste code to inject after </main> -->"><?= e(setting('code_body_open')) ?></textarea>
+      <div class="form-text">Injected between <code>&lt;/main&gt;</code> and <code>&lt;footer&gt;</code>. Good for banners, newsletter widgets, or GTM noscript fallback.</div>
     </div>
     <div class="col-12">
       <label class="form-label fw-semibold"><code>&lt;/body&gt;</code> — Before &lt;/body&gt; closing tag</label>

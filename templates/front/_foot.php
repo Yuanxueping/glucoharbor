@@ -1,5 +1,6 @@
 <?php $site_name = setting('site_name') ?: 'GlucoHarbor'; $cats = nav_categories(); $fpages = footer_pages(); ?>
 </main>
+<?php if (setting('code_body_open')): ?><?= setting('code_body_open') ?><?php endif ?>
 <footer class="site-footer">
 <div class="container">
   <div class="footer-grid">

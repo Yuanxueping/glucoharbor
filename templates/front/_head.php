@@ -44,7 +44,6 @@ $cur_path   = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 <?php if (setting('code_head')): ?><?= setting('code_head') ?><?php endif ?>
 </head>
 <body>
-<?php if (setting('code_body_open')): ?><?= setting('code_body_open') ?><?php endif ?>
 <header class="site-header">
 <div class="container">
 <div class="header-inner">
